@@ -36,7 +36,7 @@ type EvalOptions struct {
 	// Whether execution should be treated as initiated by user in the UI.
 	UserGesture bool
 
-	jsHelper *js.Function
+	JsHelper *js.Function
 }
 
 // Eval creates a EvalOptions with ByValue set to true.
@@ -45,12 +45,12 @@ func Eval(js string, args ...interface{}) *EvalOptions {
 }
 
 // Convert name and jsArgs to Page.Eval, the name is method name in the "lib/js/helper.js".
-func jsHelper(fn *js.Function, args ...interface{}) *EvalOptions {
+func JsHelper(fn *js.Function, args ...interface{}) *EvalOptions {
 	return &EvalOptions{
 		ByValue:  true,
 		JSArgs:   args,
 		JS:       `({fn}, ...args) => fn.apply(this, args)`,
-		jsHelper: fn,
+		JsHelper: fn,
 	}
 }
 
@@ -193,9 +193,9 @@ func (p *Page) formatArgs(opts *EvalOptions) ([]*proto.RuntimeCallArgument, erro
 		}
 	}
 
-	if opts.jsHelper != nil {
+	if opts.JsHelper != nil {
 		p.jsCtxLock.Lock()
-		id, err := p.ensureJSHelper(opts.jsHelper)
+		id, err := p.ensureJSHelper(opts.JsHelper)
 		p.jsCtxLock.Unlock()
 		if err != nil {
 			return nil, err

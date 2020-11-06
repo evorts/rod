@@ -104,7 +104,7 @@ func (msg *TraceMsg) String() string {
 func (p *Page) Overlay(left, top, width, height float64, msg string) (remove func()) {
 	id := utils.RandString(8)
 
-	_, _ = p.root.Evaluate(jsHelper(js.Overlay,
+	_, _ = p.root.Evaluate(JsHelper(js.Overlay,
 		id,
 		left,
 		top,
@@ -114,7 +114,7 @@ func (p *Page) Overlay(left, top, width, height float64, msg string) (remove fun
 	).ByPromise())
 
 	remove = func() {
-		_, _ = p.root.Evaluate(jsHelper(js.RemoveOverlay, id))
+		_, _ = p.root.Evaluate(JsHelper(js.RemoveOverlay, id))
 	}
 
 	return
@@ -124,13 +124,13 @@ func (p *Page) Overlay(left, top, width, height float64, msg string) (remove fun
 func (el *Element) Trace(msg string) (removeOverlay func()) {
 	id := utils.RandString(8)
 
-	_, _ = el.Evaluate(jsHelper(js.ElementOverlay,
+	_, _ = el.Evaluate(JsHelper(js.ElementOverlay,
 		id,
 		msg,
 	).ByPromise())
 
 	removeOverlay = func() {
-		_, _ = el.Evaluate(jsHelper(js.RemoveOverlay, id))
+		_, _ = el.Evaluate(JsHelper(js.RemoveOverlay, id))
 	}
 
 	return
@@ -164,8 +164,8 @@ func (p *Page) tryTraceEval(opts *EvalOptions) func() {
 
 	fn := ""
 
-	if opts.jsHelper != nil {
-		fn = "rod." + opts.jsHelper.Name
+	if opts.JsHelper != nil {
+		fn = "rod." + opts.JsHelper.Name
 	}
 
 	paramsStr := strings.Trim(mustToJSONForDev(opts.JSArgs), "[]\r\n")
@@ -229,11 +229,11 @@ func (p *Page) tryTraceReq(includes, excludes []string) func(map[proto.NetworkRe
 }
 
 func (m *Mouse) initMouseTracer() {
-	_, _ = m.page.Evaluate(jsHelper(js.InitMouseTracer, m.id, assets.MousePointer).ByPromise())
+	_, _ = m.page.Evaluate(JsHelper(js.InitMouseTracer, m.id, assets.MousePointer).ByPromise())
 }
 
 func (m *Mouse) updateMouseTracer() bool {
-	res, err := m.page.Evaluate(jsHelper(js.UpdateMouseTracer, m.id, m.x, m.y))
+	res, err := m.page.Evaluate(JsHelper(js.UpdateMouseTracer, m.id, m.x, m.y))
 	if err != nil {
 		return true
 	}
